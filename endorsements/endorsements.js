@@ -16346,6 +16346,8 @@ var mainMap;
 var us;
 var endorsements;
 
+
+
 function LoadStateShapes(callback) {
   d3.json(STATES_JSON, function(error, data) {
     if (error) {
@@ -16383,9 +16385,11 @@ function Map(selector) {
 
   // Create references to map elements.
   this.parent = d3.select(selector);
+  this.svgWrapper = this.parent.select('.svg-wrapper');
   this.svg = this.parent.select('svg');
-  this.base = this.svg.append('g');
-  this.bubbles = this.svg.append('g');
+  this.container = this.svg.append('g');
+  this.base = this.container.append('g');
+  this.bubbles = this.container.append('g');
   this.infoBox = this.parent.select('.info-box');
   this.legend = this.parent.select('#legend');
 
@@ -16432,8 +16436,22 @@ function Map(selector) {
   this.size = d3.scaleLinear()
     .domain([0, 1095])
     .range([1, this.svgWidth / 40]);
+  var that = this;
+  var zoom = d3.zoom()
+    .scaleExtent([1, 2.5])
+    .on('zoom', function() {
+      that.parent.classed('zoomed', true);
+      console.log(d3.event);
+      that.container.attr('transform', d3.event.transform);
+    });
   
-  this.candidateLock;
+  this.svg.call(zoom);
+
+};
+
+Map.prototype.zoom = function() {
+  console.log('zooming', this);
+  
 };
 
 Map.prototype.tabulateEndorsements = function() {
@@ -16467,10 +16485,6 @@ Map.prototype.drawMap = function(us) {
     .attr('d', this.path);
 };
 
-
-Map.prototype.lockNewspaper = function(newspaper) {
-
-};
 
 Map.prototype.lockFilter = function(candidate) {
   console.log('locking to ' + candidate);
@@ -16555,15 +16569,12 @@ Map.prototype.drawLegend = function() {
         .outerRadius(LEGEND_POINT_RADIUS + 4)());
 
     item.on('mouseover', function() {
-      // d3.select(this)
-      //     .select('.annulus')
-      //     .transition(d3.transition().duration(10))
-      //     .style('opacity', ANNULUS_OPACITY);
       if (that.lockedCandidate === undefined) {
         var candidate = d3.select(this).datum()[0];
         that.bubbles.selectAll('g').filter(function(d) {
           return d.e2016 !== candidate;
         }).classed('hidden', true);
+        that.bubbles.selectAll('g').classed('locked', false);
       }
     })
     .on('mouseout', function() {
@@ -16578,6 +16589,7 @@ Map.prototype.drawLegend = function() {
     .on('click', function() {
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
     });
   });
 
@@ -16609,6 +16621,7 @@ Map.prototype.drawLegend = function() {
         that.bubbles.selectAll('g').filter(function(d) {
           return d.e2012 !== candidate;
         }).classed('hidden', true);
+        that.bubbles.selectAll('.bubble').classed('locked', false);
       }
     })
     .on('mouseout', function() {
@@ -16623,6 +16636,7 @@ Map.prototype.drawLegend = function() {
     .on('click', function() {
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
     });
 
   });
