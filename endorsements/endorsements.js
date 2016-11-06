@@ -16654,7 +16654,7 @@ Map.prototype.updateInfoBox = function(datum) {
   this.infoBox.select('.mouseover-message').style('display', 'none');
   this.infoBox.selectAll('.info').style('display', 'block');
   this.infoBox.select('.newspaper-name').text(datum.newspaper)
-  this.infoBox.attr('class','info-box ' + CLASSES[datum.e2016]);
+  this.infoBox.attr('class', 'info-box has-info ' + CLASSES[datum.e2016]);
   this.infoBox.select('.circulation').text(
     datum.location + '  |  ' + FormatCirculation(datum.circulation));
 
