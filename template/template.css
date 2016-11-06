@@ -456,6 +456,9 @@ footer {
   padding: 30px 0px;
   text-align: center; }
 
+.hidden {
+  visibility: hidden; }
+
 body {
   font-size: 18px;
   font-family: 'Times New Roman', Times, serif; }

@@ -456,6 +456,9 @@ footer {
   padding: 30px 0px;
   text-align: center; }
 
+.hidden {
+  visibility: hidden; }
+
 /* 
  * Stuff that's independent of screen size.
  */
@@ -469,21 +472,20 @@ footer {
   stroke-width: 1px; }
 
 .bubble {
-  fill-opacity: 0.8; }
-
-.bubble circle, .bubble .annulus {
+  cursor: pointer;
+  fill-opacity: 0.8;
   stroke: none; }
 
-.bubble.empty circle {
-  stroke: black;
-  stroke-width: 1;
-  fill: none; }
-
-.hidden {
+.bubble .annulus {
   visibility: hidden; }
 
-.legend-item .annulus {
+.bubble:hover .annulus, .bubble.locked .annulus {
   visibility: visible; }
+
+.bubble.empty circle {
+  fill: none;
+  stroke: black;
+  stroke-width: 1; }
 
 .legend-item .annulus {
   visibility: hidden;

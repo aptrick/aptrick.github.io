@@ -16468,6 +16468,10 @@ Map.prototype.drawMap = function(us) {
 };
 
 
+Map.prototype.lockNewspaper = function(newspaper) {
+
+};
+
 Map.prototype.lockFilter = function(candidate) {
   console.log('locking to ' + candidate);
   console.log(this.lockedCandidate);
@@ -16645,11 +16649,14 @@ Map.prototype.updateInfoBox = function(datum) {
       .enter()
       .append('p')
       .html(function(p) { return p; });
-    this.infoBox.select('.endorsement-link').style('visibility', 'visible');
-    this.infoBox.select('.endorsement-link').text('read full endorsement');
+    this.infoBox.select('.endorsement-link')
+      .classed('hidden', false)
+      .text('read full endorsement')
+      .attr('href', datum.link);
   } else {
     blurb.append('p').text('No rationale given.');
-    this.infoBox.select('.endorsement-link').style('visibility', 'hidden');
+    this.infoBox.select('.endorsement-link')
+      .classed('hidden', true);
   }
 };
 
@@ -16671,14 +16678,21 @@ Map.prototype.drawBubbles = function(endorsements) {
     .append('g')
     .attr('class', function(d) { return 'bubble ' + CLASSES[d.e2016]})
     .on('mouseover', function() {
-      that.updateInfoBox(d3.select(this).datum());
-      d3.select(this)
-        .select('.annulus')
-        .transition(d3.transition().duration(0))
-        .style('opacity', ANNULUS_OPACITY);
+      // 
+      if (that.lockedNewspaper === undefined) {
+        that.updateInfoBox(d3.select(this).datum());
+      }
     })
-    .on('mouseout', function() {
-      d3.select(this).select('.annulus').transition().style('opacity', 0);  
+    .on('click', function() {
+      if (d3.select(this).classed('locked')) {
+        d3.select(this).classed('locked', false);
+        delete that.lockedNewspaper;
+      } else {
+        that.lockedNewspaper = d3.select(this).datum().newspaper;
+        that.bubbles.selectAll('g').classed('locked', false);
+        d3.select(this).classed('locked', true);
+        that.updateInfoBox(d3.select(this).datum());
+      }
     });
   
   groups
@@ -16693,8 +16707,8 @@ Map.prototype.drawBubbles = function(endorsements) {
 
   groups
     .append('path')
-    .attr('class', 'annulus')
-    .style('opacity', 0)
+    .attr('class', 'annulus hidden')
+    .style('opacity', ANNULUS_OPACITY)
     .attr('transform', function(d) {
       return 'translate(' + d.x + ',' + d.y + ')';
     })
