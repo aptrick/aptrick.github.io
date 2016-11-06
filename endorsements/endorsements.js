@@ -16321,7 +16321,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var ASPECT_RATIO = 1.62;
 var STATES_JSON = 'data/us.json';
-var MIN_RADIUS = 3;
+var MIN_RADIUS = 1;
 var MAX_RADIUS = 40;
 
 var LEGEND_ITEM_HEIGHT = 21;
@@ -16340,7 +16340,7 @@ var CLASSES = {
   'Evan McMullin':  'mcmullin'
 };
 
-var ANNULUS_OPACITY = 0.8;
+var ANNULUS_OPACITY = 0.67;
 
 var mainMap;
 var us;
@@ -16435,7 +16435,7 @@ function Map(selector) {
   // Create scale for bubble sizes.
   this.size = d3.scaleLinear()
     .domain([0, 1095])
-    .range([1, this.svgWidth / 40]);
+    .range([0.5, this.svgWidth / 40]);
   var that = this;
   var zoom = d3.zoom()
     .scaleExtent([1, 2.5])
@@ -16485,7 +16485,6 @@ Map.prototype.drawMap = function(us) {
     .attr('d', this.path);
 };
 
-
 Map.prototype.lockFilter = function(candidate) {
   console.log('locking to ' + candidate);
   console.log(this.lockedCandidate);
@@ -16533,14 +16532,13 @@ Map.prototype.lockCandidate = function(candidate) {
   }
 };
 
-
-Map.prototype.drawLegend = function() {
-  
+Map.prototype.draw2016Legend = function() {
   var that = this;
   var data = this.tabulateEndorsements();
-  console.log(data);
+
   this.legendItems = d3.select('#legend2016')
     .selectAll('.legend-item').data(data).each(function(d) {
+    
     var item = d3.select(this);
     
     item.select('.legend-label').text(d[0] + ' (' + d[1] + ')');
@@ -16592,7 +16590,11 @@ Map.prototype.drawLegend = function() {
       that.bubbles.selectAll('.bubble').classed('locked', false);
     });
   });
+};
 
+
+Map.prototype.draw2012Legend = function() {
+  var that = this;
   var candidates2012 = ['Barack Obama', 'Mitt Romney'];  
 
   this.filterOptions = d3.select('#legend2012')
@@ -16638,9 +16640,14 @@ Map.prototype.drawLegend = function() {
       that.lockFilter(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
     });
-
   });
-}
+};
+
+
+Map.prototype.drawLegend = function() {
+  this.draw2016Legend();
+  this.draw2012Legend();
+};
 
 
 Map.prototype.updateInfoBox = function(datum) {
