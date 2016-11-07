@@ -16591,12 +16591,12 @@ Map.prototype.draw2016Legend = function() {
         });
       }
     })
-    .on('click', function() {
-      var candidate = d3.select(this).datum()[0];
-      that.lockCandidate(candidate);
-      that.bubbles.selectAll('.bubble').classed('locked', false);
-    })
-    .on('touchend', function() {
+    // .on('click', function() {
+    //   var candidate = d3.select(this).datum()[0];
+    //   that.lockCandidate(candidate);
+    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    // })
+    .on('touchstart', function() {
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
@@ -16647,12 +16647,12 @@ Map.prototype.draw2012Legend = function() {
         });
       }
     })
-    .on('click', function() {
-      var candidate = d3.select(this).datum();
-      that.lockFilter(candidate);
-      that.bubbles.selectAll('.bubble').classed('locked', false);
-    })
-    .on('touchend', function() {
+    // .on('click', function() {
+    //   var candidate = d3.select(this).datum();
+    //   that.lockFilter(candidate);
+    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    // })
+    .on('touchstart', function() {
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
