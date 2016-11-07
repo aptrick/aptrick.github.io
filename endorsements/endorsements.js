@@ -16634,6 +16634,14 @@ Map.prototype.draw2012Legend = function() {
       .attr('cy', w / 2)
       .attr('r', LEGEND_POINT_RADIUS);
 
+    bubble.append('path')
+      .attr('class', 'annulus')
+      .attr('transform', function(d) {
+        return 'translate(' + (w / 2) + ',' + (w / 2) + ')';
+      })
+      .attr('d', that.annulus.innerRadius(LEGEND_POINT_RADIUS + 2)
+        .outerRadius(LEGEND_POINT_RADIUS + 4)());
+
     item
     .on('mouseover', function() {
       if (IsTouchDevice()) return;
@@ -16667,10 +16675,74 @@ Map.prototype.draw2012Legend = function() {
   });
 };
 
+Map.prototype.drawCirculationLegend = function() {
+  var that = this;
+  var circOptions = [500000, 100000, 50000];  
+
+  this.filterOptions = d3.select('#legend-circulation')
+    .selectAll('.legend-item').data(circOptions).each(function(circulation) {
+
+    var item = d3.select(this);
+
+    var w = $('.legend-bubble').width();
+    var svg = d3.select(this).select('.legend-bubble').append('svg')
+      .attr('height', w + 'px')
+      .attr('width', w + 'px');  
+    
+    var bubble = svg.append('g')
+      .attr('class', 'bubble empty');
+
+    bubble.append('circle')
+      .attr('cx', w / 2)
+      .attr('cy', w / 2)
+      .attr('r', LEGEND_POINT_RADIUS);
+
+    bubble.append('path')
+      .attr('class', 'annulus')
+      .attr('transform', function(d) {
+        return 'translate(' + (w / 2) + ',' + (w / 2) + ')';
+      })
+      .attr('d', that.annulus.innerRadius(LEGEND_POINT_RADIUS + 2)
+        .outerRadius(LEGEND_POINT_RADIUS + 4)());
+
+    item
+    .on('mouseover', function() {
+      console.log('mousing over circ');
+      if (IsTouchDevice()) return;
+      // if (that.lockedFilter === undefined) {
+        that.bubbles.selectAll('g').filter(function(d) {
+          return d.circulation < circulation;
+        }).classed('hidden', true);
+        that.bubbles.selectAll('.bubble').classed('locked', false);
+      // }
+    })
+    .on('mouseout', function() {  
+      if (IsTouchDevice()) return;
+      // if (that.lockedFilter === undefined) {
+        that.bubbles.selectAll('g').classed('hidden', function(d) {
+          if (that.lockedCandidate === undefined) return false;
+          return d.circulation < circulation;
+        });
+      // }
+    });
+    // .on('click', function() {
+    //   if (IsTouchDevice()) return;
+    //   var candidate = d3.select(this).datum();
+    //   that.lockFilter(candidate);
+    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    // })
+    // .on('touchend', function() {
+    //   var candidate = d3.select(this).datum();
+    //   that.lockFilter(candidate);
+    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    // });
+  });
+};
 
 Map.prototype.drawLegend = function() {
   this.draw2016Legend();
   this.draw2012Legend();
+  this.drawCirculationLegend();
 };
 
 
@@ -16723,7 +16795,6 @@ Map.prototype.drawBubbles = function(endorsements) {
     .append('g')
     .attr('class', function(d) { return 'bubble ' + CLASSES[d.e2016]})
     .on('mouseover', function() {
-      // 
       if (that.lockedNewspaper === undefined) {
         that.updateInfoBox(d3.select(this).datum());
       }
