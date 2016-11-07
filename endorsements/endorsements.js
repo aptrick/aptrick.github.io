@@ -16438,7 +16438,7 @@ function Map(selector) {
     .range([0.5, this.svgWidth / 40]);
   var that = this;
   var zoom = d3.zoom()
-    .scaleExtent([1, 2.5])
+    .scaleExtent([1, 3])
     .on('zoom', function() {
       that.parent.classed('zoomed', true);
       console.log(d3.event);
