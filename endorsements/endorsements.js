@@ -16331,13 +16331,23 @@ var LEGEND_POINT_RADIUS = 5;
 var LEGEND_LABEL_OFFSET = 15;
 
 var CLASSES = {
-  'Hillary Clinton': 'clinton',
-  'Donald Trump':    'trump',
-  'Gary Johnson':    'johnson',
-  'Not Donald Trump': 'not-trump',
-  'Not Hillary Clinton': 'not-clinton',
-  'No endorsement':  'no-endorsement',
-  'Evan McMullin':  'mcmullin'
+  'C': 'clinton',
+  'T':    'trump',
+  'J':    'johnson',
+  'NT': 'not-trump',
+  'NC': 'not-clinton',
+  'NO':  'no-endorsement',
+  'M':  'mcmullin'
+};
+
+var CANDIDATES = {
+  'C': 'Hillary Clinton',
+  'T':    'Donald Trump',
+  'J':    'Gary Johnson',
+  'NT': 'Not Donald Trump',
+  'NC': 'Not Hillary Clinton',
+  'NO':  'No one',
+  'M':  'Evan McMullin'
 };
 
 var ANNULUS_OPACITY = 0.67;
@@ -16579,7 +16589,7 @@ Map.prototype.draw2016Legend = function() {
     
     var item = d3.select(this);
     item.classed(CLASSES[d[0]], true);
-    item.select('.legend-label').text(d[0] + ' (' + d[1] + ')');
+    item.select('.legend-label').text(CANDIDATES[d[0]] + ' (' + d[1] + ')');
 
     var w = $('.legend-bubble').width();
     var svg = d3.select(this).select('.legend-bubble')
