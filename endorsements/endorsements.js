@@ -16432,18 +16432,30 @@ function Map(selector) {
   this.path = d3.geoPath().projection(this.projection);
   this.annulus = d3.arc().startAngle(0).endAngle(2 * Math.PI);
 
+  // this.svg.on('drag', function() {
+  //   that.svgWrapper.classed('zoomed', true);
+  // });
+  // .on('mouseup', function() {
+  //   console.log('mouseup');
+  //   that.svgWrapper.classed('zoomed', false);
+  // })
+
   // Create scale for bubble sizes.
   this.size = d3.scaleLinear()
     .domain([0, 1095])
     .range([0.5, this.svgWidth / 40]);
   var that = this;
   var zoom = d3.zoom()
-    .scaleExtent([1, 3])
-    .on('zoom', function() {
-      that.parent.classed('zoomed', true);
-      console.log(d3.event);
-      that.container.attr('transform', d3.event.transform);
-    });
+    .scaleExtent([1, 3]);
+    // .on('zoom', function() {
+    //   that.svgWrapper.classed('zoomed', true);
+    //   console.log(d3.event);
+    //   that.container.attr('transform', d3.event.transform);
+    // })
+    // .on('end', function() {
+    //   console.log('zoom over');
+    //   that.svgWrapper.classed('zoomed', false);
+    // });
   
   this.svg.call(zoom);
 
