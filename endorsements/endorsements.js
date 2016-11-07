@@ -16596,7 +16596,7 @@ Map.prototype.draw2016Legend = function() {
       that.lockCandidate(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
     })
-    .on('touchstart', function() {
+    .on('touchend', function() {
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
@@ -16652,7 +16652,7 @@ Map.prototype.draw2012Legend = function() {
       that.lockFilter(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
     })
-    .on('touchstart', function() {
+    .on('touchend', function() {
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
