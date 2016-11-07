@@ -16312,7 +16312,4 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
 
-
-console.log('hello world');
-
-d3.select('body').append('div').text('Hello world');
+console.log("hello world"),d3.select("body").append("div").text("Hello world");
