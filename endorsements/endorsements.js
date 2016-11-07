@@ -16400,7 +16400,7 @@ function Map(selector) {
   // this.svgWidth = this.windowWidth - 210 - 250 - 100;
   this.svgWidth = this.svgWidth > 900 ? 900 : this.svgWidth;
   if (this.windowWidth < 900 & this.windowWidth > 600) {
-    this.svgWidth = this.windowWidth * 0.8;
+    this.svgWidth = this.windowWidth - 20;
   }
   
   var gutterWidth = (this.windowWidth - this.svgWidth) / 2;
