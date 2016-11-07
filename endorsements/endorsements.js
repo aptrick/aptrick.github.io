@@ -115,19 +115,10 @@ function Map(selector) {
   var INFO_BOX_WIDTH = this.windowWidth > 1050 ? 250 : 210;
   var INFO_BOX_OFFSET = this.windowWidth > 1050 ? (gutterWidth - INFO_BOX_WIDTH) : 20;
 
-  // var LEGEND_OFFSET = this.windowWidth > 1050 ? (gutterWidth - LEGEND_WIDTH) : 5;
-  // d3.select('.info-box')
-  //   .style('left', INFO_BOX_OFFSET + 'px')
-  //   .style('width', INFO_BOX_WIDTH + 'px');
-  // d3.select('.legend').style('right', LEGEND_OFFSET + 'px');
-  // if (this.windowWidth < 1000) {
-  //   LEGEND_ITEM_HEIGHT = 19;
-  // }
-
   this.svgHeight = this.svgWidth / ASPECT_RATIO;
   this.svg
      .attr('width', this.svgWidth)
-     .attr('height', this.svgHeight);
+     .attr('height', this.svgHeight);    
 
   // Create map projection.
   this.projection = d3.geoAlbersUsa()
@@ -138,14 +129,6 @@ function Map(selector) {
   this.path = d3.geoPath().projection(this.projection);
   this.annulus = d3.arc().startAngle(0).endAngle(2 * Math.PI);
 
-  // this.svg.on('drag', function() {
-  //   that.svgWrapper.classed('zoomed', true);
-  // });
-  // .on('mouseup', function() {
-  //   console.log('mouseup');
-  //   that.svgWrapper.classed('zoomed', false);
-  // })
-
   // Create scale for bubble sizes.
   this.size = d3.scaleLinear()
     .domain([0, 1095])
@@ -155,11 +138,7 @@ function Map(selector) {
     .scaleExtent([1, 3])
     .on('zoom', function() {
       that.container.attr('transform', d3.event.transform);
-    })
-    // .on('end', function() {
-    //   console.log('zoom over');
-    //   that.svgWrapper.classed('zoomed', false);
-    // });
+    });
   
   this.svg.call(zoom);
 
