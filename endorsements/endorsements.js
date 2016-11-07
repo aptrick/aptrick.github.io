@@ -16493,12 +16493,14 @@ Map.prototype.drawMap = function(us) {
 };
 
 Map.prototype.lockFilter = function(candidate) {
-  console.log('locking to ' + candidate);
-  console.log(this.lockedCandidate);
-  // Reveal all bubbles except those to which a 2016 filter is applied.
   this.bubbles.selectAll('g').classed('hidden', function(d) {
-    if (this.lockedCandidate === undefined) return false;
-    return d.e2016 !== this.lockedCandidate; 
+    if (this.lockedCirculation !== undefined && d.circulation < this.lockedCirculation) {
+      return true;
+    }
+    if (this.lockedCandidate !== undefined && d.e2016 !== this.lockedCandidate) {
+      return true;
+    }
+    return false;
   }.bind(this));
   this.filterOptions.classed('locked', false);
   if (this.lockedFilter === candidate) {
@@ -16517,11 +16519,14 @@ Map.prototype.lockFilter = function(candidate) {
 };
 
 Map.prototype.lockCandidate = function(candidate) {
-  console.log('locking to ' + candidate);
-  // Reveal all bubbles unless a filter is currently applied.
   this.bubbles.selectAll('g').classed('hidden', function(d) {
-    if (this.lockedFilter === undefined) return false;
-    return d.e2012 !== this.lockedFilter; 
+    if (this.lockedCirculation !== undefined && d.circulation < this.lockedCirculation) {
+      return true;
+    }
+    if (this.lockedFilter !== undefined && d.e2012 !== this.lockedFilter) {
+      return true;
+    }
+    return false;
   }.bind(this));
   this.legendItems.classed('locked', false);
   if (this.lockedCandidate === candidate) {
@@ -16539,6 +16544,32 @@ Map.prototype.lockCandidate = function(candidate) {
   }
 };
 
+Map.prototype.lockCirculation = function(circulation) {
+  this.bubbles.selectAll('g').classed('hidden', function(d) {
+    if (this.lockedCandidate !== undefined && d.e2016 !== this.lockedCandidate) {
+      return true;
+    }
+    if (this.lockedFilter !== undefined && d.e2012 !== this.lockedFilter) {
+      return true;
+    }
+    return false;
+  }.bind(this));
+  this.circOptions.classed('locked', false);
+  if (this.lockedCirculation === circulation) {
+    delete this.lockedCirculation;  
+  } else {
+    this.lockedCirculation = circulation;
+    this.bubbles.selectAll('g').filter(function(d) {
+      return d.circulation < circulation;
+    })
+      .classed('hidden', true);
+    this.circOptions.filter(function(d) {
+      return d === circulation;
+    })
+      .classed('locked', true);
+  }
+};
+
 Map.prototype.draw2016Legend = function() {
   var that = this;
   var data = this.tabulateEndorsements();
@@ -16547,7 +16578,7 @@ Map.prototype.draw2016Legend = function() {
     .selectAll('.legend-item').data(data).each(function(d) {
     
     var item = d3.select(this);
-    
+    item.classed(CLASSES[d[0]], true);
     item.select('.legend-label').text(d[0] + ' (' + d[1] + ')');
 
     var w = $('.legend-bubble').width();
@@ -16588,8 +16619,13 @@ Map.prototype.draw2016Legend = function() {
       if (IsTouchDevice()) return;
       if (that.lockedCandidate === undefined) {
         that.bubbles.selectAll('g').classed('hidden', function(d) {
-          if (that.lockedFilter === undefined) return false;
-          return d.e2012 !== that.lockedFilter;
+          if (that.lockedCirculation !== undefined && d.circulation < that.lockedCirculation) {
+            return true;
+          }
+          if (that.lockedFilter !== undefined && d.e2012 !== that.lockedFilter) {
+            return true;
+          }
+          return false;
         });
       }
     })
@@ -16656,8 +16692,13 @@ Map.prototype.draw2012Legend = function() {
       if (IsTouchDevice()) return;
       if (that.lockedFilter === undefined) {
         that.bubbles.selectAll('g').classed('hidden', function(d) {
-          if (that.lockedCandidate === undefined) return false;
-          return d.e2016 !== that.lockedCandidate;
+          if (that.lockedCirculation !== undefined && d.circulation < that.lockedCirculation) {
+            return true;
+          }
+          if (that.lockedCandidate !== undefined && d.e2016 !== that.lockedCandidate) {
+            return true;
+          }
+          return false;
         });
       }
     })
@@ -16679,7 +16720,7 @@ Map.prototype.drawCirculationLegend = function() {
   var that = this;
   var circOptions = [500000, 100000, 50000];  
 
-  this.filterOptions = d3.select('#legend-circulation')
+  this.circOptions = d3.select('#legend-circulation')
     .selectAll('.legend-item').data(circOptions).each(function(circulation) {
 
     var item = d3.select(this);
@@ -16709,33 +16750,38 @@ Map.prototype.drawCirculationLegend = function() {
     .on('mouseover', function() {
       console.log('mousing over circ');
       if (IsTouchDevice()) return;
-      // if (that.lockedFilter === undefined) {
+      if (that.lockedCirculation === undefined) {
         that.bubbles.selectAll('g').filter(function(d) {
           return d.circulation < circulation;
         }).classed('hidden', true);
         that.bubbles.selectAll('.bubble').classed('locked', false);
-      // }
+      }
     })
     .on('mouseout', function() {  
       if (IsTouchDevice()) return;
-      // if (that.lockedFilter === undefined) {
+      if (that.lockedCirculation === undefined) {
         that.bubbles.selectAll('g').classed('hidden', function(d) {
-          if (that.lockedCandidate === undefined) return false;
-          return d.circulation < circulation;
+          if (that.lockedCandidate !== undefined && d.e2016 !== that.lockedCandidate) {
+            return true;
+          }
+          if (that.lockedFilter !== undefined && d.e2012 !== that.lockedFilter) {
+            return true;
+          }
+          return false;
         });
-      // }
+      }
+    })
+    .on('click', function() {
+      if (IsTouchDevice()) return;
+      var circulation = d3.select(this).datum();
+      that.lockCirculation(circulation);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
+    })
+    .on('touchend', function() {
+      var circulation = d3.select(this).datum();
+      that.lockCirculation(circulation);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
     });
-    // .on('click', function() {
-    //   if (IsTouchDevice()) return;
-    //   var candidate = d3.select(this).datum();
-    //   that.lockFilter(candidate);
-    //   that.bubbles.selectAll('.bubble').classed('locked', false);
-    // })
-    // .on('touchend', function() {
-    //   var candidate = d3.select(this).datum();
-    //   that.lockFilter(candidate);
-    //   that.bubbles.selectAll('.bubble').classed('locked', false);
-    // });
   });
 };
 
