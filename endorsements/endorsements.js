@@ -16573,29 +16573,30 @@ Map.prototype.draw2016Legend = function() {
       .attr('d', that.annulus.innerRadius(LEGEND_POINT_RADIUS + 2)
         .outerRadius(LEGEND_POINT_RADIUS + 4)());
 
-    item.on('mouseover', function() {
-      if (that.lockedCandidate === undefined) {
-        var candidate = d3.select(this).datum()[0];
-        that.bubbles.selectAll('g').filter(function(d) {
-          return d.e2016 !== candidate;
-        }).classed('hidden', true);
-        that.bubbles.selectAll('g').classed('locked', false);
-      }
-    })
-    .on('mouseout', function() {
-      console.log('mousing out:', that.candidateLock);
-      if (that.lockedCandidate === undefined) {
-        that.bubbles.selectAll('g').classed('hidden', function(d) {
-          if (that.lockedFilter === undefined) return false;
-          return d.e2012 !== that.lockedFilter;
-        });
-      }
-    })
-    // .on('click', function() {
-    //   var candidate = d3.select(this).datum()[0];
-    //   that.lockCandidate(candidate);
-    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    item
+    // .on('mouseover', function() {
+    //   if (that.lockedCandidate === undefined) {
+    //     var candidate = d3.select(this).datum()[0];
+    //     that.bubbles.selectAll('g').filter(function(d) {
+    //       return d.e2016 !== candidate;
+    //     }).classed('hidden', true);
+    //     that.bubbles.selectAll('g').classed('locked', false);
+    //   }
     // })
+    // .on('mouseout', function() {
+    //   console.log('mousing out:', that.candidateLock);
+    //   if (that.lockedCandidate === undefined) {
+    //     that.bubbles.selectAll('g').classed('hidden', function(d) {
+    //       if (that.lockedFilter === undefined) return false;
+    //       return d.e2012 !== that.lockedFilter;
+    //     });
+    //   }
+    // })
+    .on('click', function() {
+      var candidate = d3.select(this).datum()[0];
+      that.lockCandidate(candidate);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
+    })
     .on('touchstart', function() {
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
@@ -16629,29 +16630,28 @@ Map.prototype.draw2012Legend = function() {
       .attr('cy', w / 2)
       .attr('r', LEGEND_POINT_RADIUS);
 
-    item.on('mouseover', function() {
-      // Hide all newspapers that didn't endorse this candidate in 2012.
-      if (that.lockedFilter === undefined) {
-        that.bubbles.selectAll('g').filter(function(d) {
-          return d.e2012 !== candidate;
-        }).classed('hidden', true);
-        that.bubbles.selectAll('.bubble').classed('locked', false);
-      }
-    })
-    .on('mouseout', function() {
-      // Show all newspapers, unless  
-      if (that.lockedFilter === undefined) {
-        that.bubbles.selectAll('g').classed('hidden', function(d) {
-          if (that.lockedCandidate === undefined) return false;
-          return d.e2016 !== that.lockedCandidate;
-        });
-      }
-    })
-    // .on('click', function() {
-    //   var candidate = d3.select(this).datum();
-    //   that.lockFilter(candidate);
-    //   that.bubbles.selectAll('.bubble').classed('locked', false);
+    item
+    // .on('mouseover', function() {
+    //   if (that.lockedFilter === undefined) {
+    //     that.bubbles.selectAll('g').filter(function(d) {
+    //       return d.e2012 !== candidate;
+    //     }).classed('hidden', true);
+    //     that.bubbles.selectAll('.bubble').classed('locked', false);
+    //   }
     // })
+    // .on('mouseout', function() {  
+    //   if (that.lockedFilter === undefined) {
+    //     that.bubbles.selectAll('g').classed('hidden', function(d) {
+    //       if (that.lockedCandidate === undefined) return false;
+    //       return d.e2016 !== that.lockedCandidate;
+    //     });
+    //   }
+    // })
+    .on('click', function() {
+      var candidate = d3.select(this).datum();
+      that.lockFilter(candidate);
+      that.bubbles.selectAll('.bubble').classed('locked', false);
+    })
     .on('touchstart', function() {
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
