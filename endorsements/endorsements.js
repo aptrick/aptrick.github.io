@@ -16594,6 +16594,7 @@ Map.prototype.draw2016Legend = function() {
       }
     })
     .on('click', function() {
+      if (IsTouchDevice()) return;
       console.log('click', d3.event);
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
