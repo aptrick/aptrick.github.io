@@ -16346,7 +16346,9 @@ var mainMap;
 var us;
 var endorsements;
 
-
+function IsTouchDevice() {
+  return 'ontouchstart' in window;
+}
 
 function LoadStateShapes(callback) {
   d3.json(STATES_JSON, function(error, data) {
@@ -16446,12 +16448,10 @@ function Map(selector) {
     .range([0.5, this.svgWidth / 40]);
   var that = this;
   var zoom = d3.zoom()
-    .scaleExtent([1, 3]);
-    // .on('zoom', function() {
-    //   that.svgWrapper.classed('zoomed', true);
-    //   console.log(d3.event);
-    //   that.container.attr('transform', d3.event.transform);
-    // })
+    .scaleExtent([1, 3])
+    .on('zoom', function() {
+      that.container.attr('transform', d3.event.transform);
+    })
     // .on('end', function() {
     //   console.log('zoom over');
     //   that.svgWrapper.classed('zoomed', false);
@@ -16574,30 +16574,33 @@ Map.prototype.draw2016Legend = function() {
         .outerRadius(LEGEND_POINT_RADIUS + 4)());
 
     item
-    // .on('mouseover', function() {
-    //   if (that.lockedCandidate === undefined) {
-    //     var candidate = d3.select(this).datum()[0];
-    //     that.bubbles.selectAll('g').filter(function(d) {
-    //       return d.e2016 !== candidate;
-    //     }).classed('hidden', true);
-    //     that.bubbles.selectAll('g').classed('locked', false);
-    //   }
-    // })
-    // .on('mouseout', function() {
-    //   console.log('mousing out:', that.candidateLock);
-    //   if (that.lockedCandidate === undefined) {
-    //     that.bubbles.selectAll('g').classed('hidden', function(d) {
-    //       if (that.lockedFilter === undefined) return false;
-    //       return d.e2012 !== that.lockedFilter;
-    //     });
-    //   }
-    // })
+    .on('mouseover', function() {
+      if (IsTouchDevice()) return;
+      if (that.lockedCandidate === undefined) {
+        var candidate = d3.select(this).datum()[0];
+        that.bubbles.selectAll('g').filter(function(d) {
+          return d.e2016 !== candidate;
+        }).classed('hidden', true);
+        that.bubbles.selectAll('g').classed('locked', false);
+      }
+    })
+    .on('mouseout', function() {
+      if (IsTouchDevice()) return;
+      if (that.lockedCandidate === undefined) {
+        that.bubbles.selectAll('g').classed('hidden', function(d) {
+          if (that.lockedFilter === undefined) return false;
+          return d.e2012 !== that.lockedFilter;
+        });
+      }
+    })
     .on('click', function() {
+      console.log('click', d3.event);
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
     })
     .on('touchstart', function() {
+      console.log('touchstart', d3.event);
       var candidate = d3.select(this).datum()[0];
       that.lockCandidate(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
@@ -16631,22 +16634,24 @@ Map.prototype.draw2012Legend = function() {
       .attr('r', LEGEND_POINT_RADIUS);
 
     item
-    // .on('mouseover', function() {
-    //   if (that.lockedFilter === undefined) {
-    //     that.bubbles.selectAll('g').filter(function(d) {
-    //       return d.e2012 !== candidate;
-    //     }).classed('hidden', true);
-    //     that.bubbles.selectAll('.bubble').classed('locked', false);
-    //   }
-    // })
-    // .on('mouseout', function() {  
-    //   if (that.lockedFilter === undefined) {
-    //     that.bubbles.selectAll('g').classed('hidden', function(d) {
-    //       if (that.lockedCandidate === undefined) return false;
-    //       return d.e2016 !== that.lockedCandidate;
-    //     });
-    //   }
-    // })
+    .on('mouseover', function() {
+      if (IsTouchDevice()) return;
+      if (that.lockedFilter === undefined) {
+        that.bubbles.selectAll('g').filter(function(d) {
+          return d.e2012 !== candidate;
+        }).classed('hidden', true);
+        that.bubbles.selectAll('.bubble').classed('locked', false);
+      }
+    })
+    .on('mouseout', function() {  
+      if (IsTouchDevice()) return;
+      if (that.lockedFilter === undefined) {
+        that.bubbles.selectAll('g').classed('hidden', function(d) {
+          if (that.lockedCandidate === undefined) return false;
+          return d.e2016 !== that.lockedCandidate;
+        });
+      }
+    })
     .on('click', function() {
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
