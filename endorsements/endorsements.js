@@ -16653,6 +16653,7 @@ Map.prototype.draw2012Legend = function() {
       }
     })
     .on('click', function() {
+      if (IsTouchDevice()) return;
       var candidate = d3.select(this).datum();
       that.lockFilter(candidate);
       that.bubbles.selectAll('.bubble').classed('locked', false);
